@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.PriorityQueue;
 import java.util.concurrent.TimeUnit;
 
 public class InMemoryQueueService implements QueueService {
@@ -27,13 +27,13 @@ public class InMemoryQueueService implements QueueService {
   }
 
   @Override
-  public void push(String queueUrl, String msgBody) {
+  public void push(String queueUrl, String msgBody, int priority) {
     Queue<Message> queue = queues.get(queueUrl);
     if (queue == null) {
-      queue = new ConcurrentLinkedQueue<>();
+      queue = new PriorityQueue<>(Comparator.comparingInt(Message::getPriority));
       queues.put(queueUrl, queue);
     }
-    queue.add(new Message(msgBody));
+    queue.add(new Message(msgBody, priority));
   }
 
   @Override

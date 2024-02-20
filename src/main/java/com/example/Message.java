@@ -12,6 +12,8 @@ public class Message {
 
   private String msgBody;
 
+  private int priority;
+
   Message(String msgBody) {
     this.msgBody = msgBody;
   }
@@ -21,8 +23,22 @@ public class Message {
     this.receiptId = receiptId;
   }
 
+  Message(String msgBody , int priority){
+    this.msgBody = msgBody;
+    this.priority = priority;
+  }
+
+  Message(String msgBody , String receiptId, int priority){
+    this.msgBody = msgBody;
+    this.receiptId = receiptId;
+    this.priority = priority;
+  }
   public String getReceiptId() {
     return this.receiptId;
+  }
+
+  public String getpriority() {
+    return this.priority;
   }
 
   protected void setReceiptId(String receiptId) {
