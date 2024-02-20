@@ -20,21 +20,24 @@ public class InMemoryQueueTest {
 	
 	@Test
 	public void testSendMessage(){
-		qs.push(queueUrl, "Good message!");
+		qs.push(queueUrl, "Good message!",3);
 		Message msg = qs.pull(queueUrl);
 
 		assertNotNull(msg);
 		assertEquals("Good message!", msg.getBody());
+		assertEquals(3, msg.getPriority());
 	}
 	
 	@Test
 	public void testPullMessage(){
 		String msgBody = "{ \"name\":\"John\", \"age\":30, \"car\":null }";
+		int priority = 1
 		
-		qs.push(queueUrl, msgBody);
+		qs.push(queueUrl, msgBody, priority);
 		Message msg = qs.pull(queueUrl);
 
 		assertEquals(msgBody, msg.getBody());
+		assertEquals(priority, msg.priority());
 		assertTrue(msg.getReceiptId() != null && msg.getReceiptId().length() > 0);
 	}
 
@@ -46,7 +49,7 @@ public class InMemoryQueueTest {
 	
 	@Test
 	public void testDoublePull(){
-		qs.push(queueUrl, "Message A.");
+		qs.push(queueUrl, "Message A.",5);
 		qs.pull(queueUrl);
 		Message msg = qs.pull(queueUrl);
 		assertNull(msg);
@@ -55,8 +58,9 @@ public class InMemoryQueueTest {
 	@Test
 	public void testDeleteMessage(){
 		String msgBody = "{ \"name\":\"John\", \"age\":30, \"car\":null }";
+		int priority = 7
 		
-		qs.push(queueUrl, msgBody);
+		qs.push(queueUrl, msgBody, priority);
 		Message msg = qs.pull(queueUrl);
 
 		qs.delete(queueUrl, msg.getReceiptId());
@@ -77,9 +81,10 @@ public class InMemoryQueueTest {
 				"        \"car3\":\"Fiat\"\n" + 
 				"    }\n" + 
 				" }"};
-		qs.push(queueUrl, msgStrs[0]);
-		qs.push(queueUrl, msgStrs[1]);
-		qs.push(queueUrl, msgStrs[2]);
+		int [] priority = {5,6,7}
+		qs.push(queueUrl, msgStrs[0], priority[0]);
+		qs.push(queueUrl, msgStrs[1], priority[1]);
+		qs.push(queueUrl, msgStrs[2], priority[2]);
 		Message msg1 = qs.pull(queueUrl);
 		Message msg2 = qs.pull(queueUrl);
 		Message msg3 = qs.pull(queueUrl);
@@ -96,7 +101,7 @@ public class InMemoryQueueTest {
 			}
 		};
 		
-		queueService.push(queueUrl, "Message A.");
+		queueService.push(queueUrl, "Message A.", 9);
 		queueService.pull(queueUrl);
 		Message msg = queueService.pull(queueUrl);
 		assertTrue(msg != null && msg.getBody() == "Message A.");
