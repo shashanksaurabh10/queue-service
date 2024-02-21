@@ -52,7 +52,6 @@ public class KakfkaQueueService implements QueueService {
 
     @Override
     public void push(String queueUrl, String messageBody) {
-        validateArguments(messageBody, queueUrl);
         try {
             HttpURLConnection connection = openConnection(queueUrl, "POST");
             writeRequestBody(connection, messageBody);
@@ -65,7 +64,6 @@ public class KakfkaQueueService implements QueueService {
 
     @Override
     public Message pull(String queueUrl) {
-        validateArguments(queueUrl);
         try {
             HttpURLConnection connection = openConnection(queueUrl, "GET");
             String response = readResponseBody(connection);
@@ -78,13 +76,5 @@ public class KakfkaQueueService implements QueueService {
     @Override
     public void delete(String queueUrl, String receiptId) {
         // Deleting in Kafka server is not possible through upstash
-    }
-
-    private void validateArguments(String... args) {
-        for (String arg : args) {
-            if (arg == null || arg.isBlank()) {
-                throw new RuntimeException("Argument cannot be empty");
-            }
-        }
     }
 }
